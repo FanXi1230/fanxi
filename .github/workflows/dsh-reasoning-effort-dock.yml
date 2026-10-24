@@ -1,0 +1,26 @@
+name: Validate Reasoning Effort Dock
+
+on:
+  push:
+    paths:
+      - "plugins/dsh-reasoning-effort-dock/**"
+      - ".github/workflows/dsh-reasoning-effort-dock.yml"
+  pull_request:
+    paths:
+      - "plugins/dsh-reasoning-effort-dock/**"
+      - ".github/workflows/dsh-reasoning-effort-dock.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate package
+        run: node plugins/dsh-reasoning-effort-dock/scripts/validate.mjs

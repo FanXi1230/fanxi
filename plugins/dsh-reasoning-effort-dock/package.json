@@ -1,0 +1,71 @@
+{
+  "name": "dsh-reasoning-effort-dock",
+  "version": "1.0.0",
+  "description": "A draggable off / low / high / max reasoning-effort slider in the DeepSeek Harness composer model row, bound to the real per-session model selection.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "assets",
+    "screenshots.json",
+    "scripts/validate.mjs",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "reasoning-effort",
+    "reasoning",
+    "composer",
+    "slider",
+    "ui"
+  ],
+  "author": "FanXi1230",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FanXi1230/fanxi.git",
+    "directory": "plugins/dsh-reasoning-effort-dock"
+  },
+  "homepage": "https://github.com/FanXi1230/fanxi/tree/main/plugins/dsh-reasoning-effort-dock#readme",
+  "bugs": {
+    "url": "https://github.com/FanXi1230/fanxi/issues"
+  },
+  "engines": {
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "scripts": {
+    "check": "node scripts/validate.mjs",
+    "test": "node scripts/validate.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-model-selection"
+      ]
+    }
+  }
+}
