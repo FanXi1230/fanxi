@@ -16,7 +16,7 @@
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-2ea44f"></a>
 </p>
 
-![Reasoning Effort Dock at max effort](assets/screenshots/max.png)
+![Reasoning Effort Dock at Max effort](assets/screenshots/max.png)
 
 ## What it does
 
@@ -26,10 +26,10 @@ native reasoning levels as a snap slider rather than a menu:
 
 | Stop | Meaning |
 | --- | --- |
-| `off` | No reasoning effort |
-| `low` | Light reasoning |
-| `high` | High reasoning |
-| `max` | Maximum reasoning effort |
+| `Off` | No reasoning effort |
+| `Low` | Light reasoning |
+| `High` | High reasoning |
+| `Max` | Maximum reasoning effort |
 
 - Drag the thumb, click the track, or use the arrow keys; the thumb always
   snaps to one of the four fixed levels.
@@ -40,13 +40,13 @@ native reasoning levels as a snap slider rather than a menu:
   real reasoning parameter used by the next request, not a display-only value.
 - Blank new sessions and existing conversations both render the control,
   because it is registered in `conversation.input.right` in the composer row.
-- Only `max` adds the blue-white electric layer plus a soft lateral white
+- Only `Max` adds the blue-white electric layer plus a soft lateral white
   sweep, fine vertical streak flow, drifting sparks, ambient halo, and thumb
-  pulse. `off`, `low`, and `high` cross-fade through their own fill colors while
+  pulse. `Off`, `Low`, and `High` cross-fade through their own fill colors while
   a subtle iridescent highlight keeps the bar visually continuous.
 - The widget border is the clipping boundary: effects may cross the blue rail,
   but nothing can paint outside the rounded module.
-- On `max`, two short warm-gold starlight flashes cross the full rail per cycle;
+- On `Max`, two short warm-gold starlight flashes cross the full rail per cycle;
   they are intentionally a different colour from the blue-white lightning.
 - A quiet blue/cyan starfield around the bar, plus a few star specks in the
   track, echo the cosmic theme without turning the control into a rainbow.
@@ -93,7 +93,7 @@ into a profile with `dsh plugin --profile <profile> add <package-directory>`.
 ## Usage
 
 1. Start a new conversation or open an existing one.
-2. Move the slider to `off`, `low`, `high`, or `max`.
+2. Move the slider to `Off`, `Low`, `High`, or `Max`.
 3. Send the next message. The selected level is the reasoning effort used for
    the request; the native model menu shows the same level.
 
@@ -132,8 +132,8 @@ The plugin was also exercised in the running DSH Web UI against
 
 - a new blank session renders the 400 × 38 control;
 - switching to an existing session keeps it rendered;
-- a pointer-driven move to `high` changes the native model-selection state to
-  `High`, and moving back to `max` restores `Max`.
+- a pointer-driven move to `High` changes the native model-selection state to
+  `High`, and moving back to `Max` restores `Max`.
 
 ## License
 

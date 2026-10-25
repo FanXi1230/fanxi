@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "推理强度滑轨",
-    "description": "在输入框模型栏加入可拖拽吸附的 off / low / high / max 推理强度滑轨，并与当前会话的模型选择实时同步。"
+    "description": "在输入框模型栏加入可拖拽吸附的 Off / Low / High / Max 推理强度滑轨，并与当前会话的模型选择实时同步。"
   }
 }

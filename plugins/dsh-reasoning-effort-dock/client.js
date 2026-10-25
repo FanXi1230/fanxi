@@ -17,7 +17,14 @@ window.__ModuleLoader__.load({
 
     const NS = 'dsh-reasoning-effort-dock';
     const LEVEL_ORDER = ['off', 'low', 'high', 'max'];
+    const LEVEL_NAMES = Object.freeze({ off: 'Off', low: 'Low', high: 'High', max: 'Max' });
     const DEFAULT_LABEL = '推理强度';
+
+    function levelDisplayName(value) {
+      const key = String(value ?? '').toLowerCase();
+      if (LEVEL_NAMES[key]) return LEVEL_NAMES[key];
+      return key ? key.charAt(0).toUpperCase() + key.slice(1) : 'Off';
+    }
 
     const CSS = `
 .dsh-effort {
@@ -799,6 +806,7 @@ window.__ModuleLoader__.load({
           ? indexRatio(activeIndex, levels.length)
           : 0;
       const displayLevel = displayIndex >= 0 ? levels[displayIndex] : 'off';
+      const displayText = levelDisplayName(displayLevel);
       const fillPercent = (displayRatio * 100).toFixed(4) + '%';
       const thumbPercent = (displayRatio * 100).toFixed(4) + '%';
       const activeLabelIndex = drag ? drag.index : hasActive ? activeIndex : -1;
@@ -951,7 +959,7 @@ window.__ModuleLoader__.load({
               'aria-valuemin': 0,
               'aria-valuemax': levels.length - 1,
               'aria-valuenow': hasActive ? activeIndex : 0,
-              'aria-valuetext': displayLevel,
+              'aria-valuetext': displayText,
               'aria-busy': busy ? 'true' : undefined,
               'aria-disabled': busy ? 'true' : undefined,
               onPointerDown: beginDrag,
@@ -1081,7 +1089,7 @@ window.__ModuleLoader__.load({
                     transform: isFirst ? 'none' : isLast ? 'translateX(-100%)' : 'translateX(-50%)',
                   },
                 },
-                level
+                levelDisplayName(level)
               );
             })
           )

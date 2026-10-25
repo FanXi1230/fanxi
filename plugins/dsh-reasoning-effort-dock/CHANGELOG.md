@@ -4,6 +4,14 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [1.2.1] - 2026-10-25
+
+### Changed
+
+- Displayed level names are now title case: `Off`, `Low`, `High`, and `Max`.
+  The values sent to DSH's model-selection API remain the native lowercase ids.
+- `aria-valuetext` now uses the same title-case names.
+
 ## [1.2.0] - 2026-10-25
 
 ### Changed
