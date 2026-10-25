@@ -30,6 +30,8 @@ window.__ModuleLoader__.load({
   --dsh-effort-sheen-opacity: 0.26;
   --dsh-effort-halo-opacity: 0.08;
   position: relative;
+  overflow: hidden;
+  isolation: isolate;
   box-sizing: border-box;
   display: flex;
   flex: 0 0 auto;
@@ -107,6 +109,46 @@ window.__ModuleLoader__.load({
   cursor: progress;
 }
 
+.dsh-effort__halo {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: -6px;
+  right: -6px;
+  height: 48px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, var(--dsh-effort-glow), transparent 70%);
+  filter: blur(12px);
+  opacity: var(--dsh-effort-halo-opacity);
+  transform: translateY(-50%);
+  transition: opacity 500ms ease, filter 500ms ease;
+  pointer-events: none;
+}
+
+/* Quiet starfield around the bar. Root clipping keeps every speck inside the
+   module border, including its rounded corners. */
+.dsh-effort__cosmos {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.7;
+  background:
+    radial-gradient(circle at 8% 22%, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 19% 77%, rgba(128, 231, 255, 0.8) 0 0.9px, transparent 1.5px),
+    radial-gradient(circle at 31% 16%, rgba(255, 255, 255, 0.55) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 44% 83%, rgba(255, 228, 160, 0.8) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 57% 27%, rgba(202, 247, 255, 0.7) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 68% 72%, rgba(255, 255, 255, 0.65) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 81% 18%, rgba(255, 228, 160, 0.6) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 92% 64%, rgba(173, 235, 255, 0.75) 0 1.1px, transparent 1.8px),
+    radial-gradient(ellipse at 50% 55%, rgba(27, 74, 175, 0.28), transparent 65%);
+  background-repeat: no-repeat;
+  animation: dsh-effort-cosmos 6.5s ease-in-out infinite;
+}
+
 .dsh-effort__track {
   position: relative;
   z-index: 2;
@@ -147,6 +189,23 @@ window.__ModuleLoader__.load({
   background-size: 220% 100%;
   opacity: 0.56;
   animation: dsh-effort-rail-drift 6.2s linear infinite;
+  pointer-events: none;
+}
+
+/* A few star specks inside the bar itself, kept below the ticks and thumb. */
+.dsh-effort__rail::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 45%, rgba(255, 255, 255, 0.95) 0 0.7px, transparent 1.4px),
+    radial-gradient(circle at 37% 30%, rgba(190, 250, 255, 0.85) 0 0.6px, transparent 1.3px),
+    radial-gradient(circle at 64% 70%, rgba(255, 255, 255, 0.75) 0 0.8px, transparent 1.5px),
+    radial-gradient(circle at 86% 38%, rgba(255, 232, 170, 0.85) 0 0.7px, transparent 1.4px);
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  animation: dsh-effort-star-twinkle 4.8s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -267,6 +326,17 @@ window.__ModuleLoader__.load({
   box-shadow: 0 0 6px var(--dsh-effort-glow);
 }
 
+.dsh-effort__thumb::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(171, 244, 255, 0.55);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 460ms ease;
+  pointer-events: none;
+}
+
 .dsh-effort__track:hover .dsh-effort__thumb {
   transform: translate(-50%, -50%) scale(1.07);
 }
@@ -290,7 +360,7 @@ window.__ModuleLoader__.load({
 
 .dsh-effort__track:focus-visible .dsh-effort__rail {
   outline: 2px solid color-mix(in srgb, var(--dsw-alias-brand-primary) 76%, transparent);
-  outline-offset: 4px;
+  outline-offset: -2px;
 }
 
 .dsh-effort__labels {
@@ -319,10 +389,10 @@ window.__ModuleLoader__.load({
   opacity: 1;
 }
 
-/* MAX-only electricity. All non-lightning motion is clipped to the rail and
-   fill; this wrapper is the only intentional overflow layer, so it contains
-   lightning and nothing else. The layer is always mounted and cross-fades, so
-   a level change never snaps the lightning in or out. */
+/* MAX-only electricity and shimmer. The wrapper may extend beyond the blue
+   rail, but the module root clips everything to its rounded border, so no
+   effect can reach outside the widget. The layer is always mounted and
+   cross-fades, so a level change never snaps the effects in or out. */
 .dsh-effort__max-fx {
   position: absolute;
   z-index: 4;
@@ -353,6 +423,53 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-level="max"] .dsh-effort__max-fx * {
   animation-play-state: running !important;
+}
+
+.dsh-effort__max-bloom {
+  position: absolute;
+  inset: 0 16px;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(161, 248, 255, 0.42),
+    rgba(48, 122, 255, 0.14) 45%,
+    transparent 72%
+  );
+  filter: blur(8px);
+  opacity: 0.86;
+}
+
+.dsh-effort__max-streaks {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 16px;
+  right: 16px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 12px,
+    rgba(219, 253, 255, 0.78) 13px,
+    transparent 15px 27px
+  );
+  background-size: 42px 100%;
+  opacity: 0.6;
+  mix-blend-mode: screen;
+  animation: dsh-effort-streaks 0.9s linear infinite;
+}
+
+.dsh-effort__max-sparks {
+  position: absolute;
+  inset: 8px 16px;
+  background-image:
+    radial-gradient(circle at 20% 32%, rgba(255, 255, 255, 0.95) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 74% 68%, rgba(139, 242, 255, 0.9) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 48% 20%, rgba(255, 255, 255, 0.75) 0 0.8px, transparent 1.4px);
+  background-repeat: repeat;
+  background-size: 88px 100%, 143px 100%, 197px 100%;
+  background-position: 0 0, 28px 0, 71px 0;
+  mix-blend-mode: screen;
+  opacity: 0.82;
+  animation: dsh-effort-sparks 2.2s linear infinite;
 }
 
 .dsh-effort__max-bolts {
@@ -404,22 +521,51 @@ window.__ModuleLoader__.load({
   animation-delay: -0.16s;
 }
 
-/* Two sharp, full-bar flashes. The stroke is drawn across the whole track in a
-   fraction of the cycle, then disappears again before the next pass. */
-.dsh-effort__bolt--flash {
-  stroke: #f2ffff;
+/* Warm starlight flashes, deliberately separate from the blue-white lightning
+   so the two rhythms never read as one colour. */
+.dsh-effort__max-flash {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter:
+    drop-shadow(0 0 2px rgba(255, 248, 225, 0.96))
+    drop-shadow(0 0 8px rgba(255, 207, 120, 0.86))
+    drop-shadow(0 0 16px rgba(255, 166, 64, 0.38));
+}
+
+.dsh-effort__max-flash path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dsh-effort__flash {
+  stroke: #ffe1a3;
   stroke-width: 1.85;
   stroke-dasharray: 100 100;
   stroke-dashoffset: 100;
   opacity: 0;
-  filter: drop-shadow(0 0 4px rgba(225, 254, 255, 0.95));
   animation: dsh-effort-bolt-flash 3.6s linear infinite;
 }
 
-.dsh-effort__bolt--flash-b {
+.dsh-effort__flash--b {
+  stroke: #fff0c7;
   stroke-width: 1.35;
   animation-delay: -1.8s;
-  filter: drop-shadow(0 0 3px rgba(176, 248, 255, 0.8));
+}
+
+.dsh-effort__max-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -36%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.88), transparent);
+  filter: blur(2px);
+  animation: dsh-effort-max-sheen 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .dsh-effort[data-level="max"] .dsh-effort__thumb {
@@ -427,7 +573,13 @@ window.__ModuleLoader__.load({
   background: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 70%, #1a70ff);
   box-shadow:
     0 0 0 3px rgba(134, 240, 255, 0.14),
-    0 0 8px rgba(104, 231, 255, 0.56);
+    0 0 10px rgba(104, 231, 255, 0.64),
+    0 0 20px rgba(50, 117, 255, 0.38);
+}
+
+.dsh-effort[data-level="max"] .dsh-effort__thumb::after {
+  opacity: 0.92;
+  animation: dsh-effort-thumb-pulse 1.8s ease-out infinite;
 }
 
 .dsh-effort[data-level="max"] .dsh-effort__label.is-active {
@@ -439,6 +591,18 @@ window.__ModuleLoader__.load({
   to { background-position: 220% 0; }
 }
 
+@keyframes dsh-effort-cosmos {
+  0%, 100% { opacity: 0.5; filter: brightness(0.96); }
+  42% { opacity: 0.78; filter: brightness(1.14); }
+  58% { opacity: 0.66; filter: brightness(1.04); }
+}
+
+@keyframes dsh-effort-star-twinkle {
+  0%, 100% { opacity: 0.55; }
+  44% { opacity: 0.95; }
+  62% { opacity: 0.7; }
+}
+
 @keyframes dsh-effort-iridescence {
   from { background-position: -140% 0; }
   to { background-position: 140% 0; }
@@ -447,6 +611,16 @@ window.__ModuleLoader__.load({
 @keyframes dsh-effort-sheen {
   0% { left: -36%; }
   100% { left: 104%; }
+}
+
+@keyframes dsh-effort-streaks {
+  from { background-position: 0 0; }
+  to { background-position: 42px 0; }
+}
+
+@keyframes dsh-effort-sparks {
+  from { background-position: 0 0, 28px 0, 71px 0; }
+  to { background-position: 88px 0, 171px 0, 268px 0; }
 }
 
 @keyframes dsh-effort-bolt {
@@ -480,15 +654,31 @@ window.__ModuleLoader__.load({
   }
 }
 
+@keyframes dsh-effort-max-sheen {
+  0% { left: -36%; opacity: 0; }
+  14% { opacity: 0.9; }
+  76% { opacity: 0.72; }
+  100% { left: 104%; opacity: 0; }
+}
+
+@keyframes dsh-effort-thumb-pulse {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  74%, 100% { transform: scale(1.45); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dsh-effort__rail::before,
+  .dsh-effort__rail::after,
+  .dsh-effort__cosmos,
   .dsh-effort__fill::before,
   .dsh-effort__fill::after,
-  .dsh-effort__max-fx * {
+  .dsh-effort__max-fx *,
+  .dsh-effort[data-level="max"] .dsh-effort__thumb::after {
     animation: none !important;
   }
   .dsh-effort__fill,
-  .dsh-effort__thumb {
+  .dsh-effort__thumb,
+  .dsh-effort__halo {
     transition: none;
   }
 }
@@ -748,6 +938,8 @@ window.__ModuleLoader__.load({
             'data-busy': busy ? 'true' : 'false',
             'data-error': failure ? 'true' : 'false',
           },
+          h('span', { className: 'dsh-effort__halo', 'aria-hidden': 'true' }),
+          h('span', { className: 'dsh-effort__cosmos', 'aria-hidden': 'true' }),
           h(
             'div',
             {
@@ -790,6 +982,9 @@ window.__ModuleLoader__.load({
             h(
               'span',
               { className: 'dsh-effort__max-fx', 'aria-hidden': 'true' },
+              h('span', { className: 'dsh-effort__max-bloom' }),
+              h('span', { className: 'dsh-effort__max-streaks' }),
+              h('span', { className: 'dsh-effort__max-sparks' }),
               h(
                 'svg',
                 {
@@ -839,18 +1034,29 @@ window.__ModuleLoader__.load({
                   className: 'dsh-effort__bolt dsh-effort__bolt--c',
                   pathLength: 100,
                   d: 'M -10 15 L 24 25 L 52 11 L 81 23 L 109 15 L 137 28 L 166 18 L 194 30 L 222 13 L 250 25 L 279 18 L 308 29 L 337 15 L 365 26 L 393 17 L 420 24',
-                }),
+                })
+              ),
+              h(
+                'svg',
+                {
+                  className: 'dsh-effort__max-flash',
+                  viewBox: '0 0 420 48',
+                  preserveAspectRatio: 'none',
+                  focusable: 'false',
+                  'aria-hidden': 'true',
+                },
                 h('path', {
-                  className: 'dsh-effort__bolt dsh-effort__bolt--flash',
+                  className: 'dsh-effort__flash',
                   pathLength: 100,
                   d: 'M -8 24 L 30 19 L 58 31 L 88 16 L 116 28 L 145 21 L 174 34 L 203 14 L 232 27 L 261 19 L 290 32 L 318 17 L 346 30 L 373 20 L 400 28 L 428 22',
                 }),
                 h('path', {
-                  className: 'dsh-effort__bolt dsh-effort__bolt--flash dsh-effort__bolt--flash-b',
+                  className: 'dsh-effort__flash dsh-effort__flash--b',
                   pathLength: 100,
                   d: 'M -8 34 L 26 27 L 55 38 L 85 23 L 113 35 L 142 26 L 170 40 L 198 24 L 227 34 L 255 26 L 284 37 L 312 22 L 340 34 L 368 25 L 396 36 L 428 30',
                 })
-              )
+              ),
+              h('span', { className: 'dsh-effort__max-sheen' })
             ),
             h('span', {
               className: 'dsh-effort__thumb',

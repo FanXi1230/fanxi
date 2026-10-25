@@ -40,13 +40,16 @@ native reasoning levels as a snap slider rather than a menu:
   real reasoning parameter used by the next request, not a display-only value.
 - Blank new sessions and existing conversations both render the control,
   because it is registered in `conversation.input.right` in the composer row.
-- Only `max` adds the white-blue electric layer. `off`, `low`, and `high`
-  cross-fade through their own fill colors while a subtle iridescent highlight
-  keeps the bar visually continuous.
-- Every non-lightning moving layer is clipped to the track. Only the lightning
-  is allowed to paint outside the bar.
-- On `max`, short full-width lightning flashes cross the track, blink twice,
-  and vanish before repeating.
+- Only `max` adds the blue-white electric layer plus a soft lateral white
+  sweep, fine vertical streak flow, drifting sparks, ambient halo, and thumb
+  pulse. `off`, `low`, and `high` cross-fade through their own fill colors while
+  a subtle iridescent highlight keeps the bar visually continuous.
+- The widget border is the clipping boundary: effects may cross the blue rail,
+  but nothing can paint outside the rounded module.
+- On `max`, two short warm-gold starlight flashes cross the full rail per cycle;
+  they are intentionally a different colour from the blue-white lightning.
+- A quiet blue/cyan starfield around the bar, plus a few star specks in the
+  track, echo the cosmic theme without turning the control into a rainbow.
 - The component follows the active DSH theme tokens and respects
   `prefers-reduced-motion`.
 
@@ -105,11 +108,12 @@ reads the existing `ctx.modelDirectories.directoryFor(sessionId)` directory and
 calls the same `directory.select(...)` operation as DSH's model menu. It owns no
 session state, does not call the network, and does not store credentials.
 
-The MAX lightning layer is pure CSS/SVG, is always mounted, and cross-fades by
-opacity; its animations are paused while another level is active. That is what
+The MAX effects are pure CSS/SVG, are always mounted, and cross-fade by
+opacity; their animations are paused while another level is active. That is what
 makes level changes smooth rather than switching a display on and off. The
-moving fill, shimmer, and thumb effects stay inside their clipping containers;
-only the lightning and its glow are allowed to overflow the rail.
+moving fill, sweep, streak, spark, halo, and thumb pulse can extend beyond the
+blue rail, but the module root clips every layer to the rounded widget border,
+so nothing can leak into the surrounding composer row.
 
 ## Validation
 

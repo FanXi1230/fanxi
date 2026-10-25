@@ -1,6 +1,6 @@
 {
   "name": "dsh-reasoning-effort-dock",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A draggable off / low / high / max reasoning-effort slider in the DeepSeek Harness composer model row, bound to the real per-session model selection.",
   "type": "module",
   "main": "./index.js",

@@ -4,6 +4,22 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [1.2.0] - 2026-10-25
+
+### Changed
+
+- Restored the MAX lateral white sweep, vertical streak flow, drifting sparks,
+  ambient halo, and thumb pulse ring.
+- Moved the clipping boundary from the rail to the module root. Effects may
+  cross the blue rail, but the rounded widget border is now the hard limit.
+- Aligned the vertical streak and spark fields to the rail's horizontal bounds.
+
+### Added
+
+- A quiet blue/cyan starfield around the bar and a few star specks inside it.
+- A separate warm-gold starlight flash crosses the full rail twice per cycle;
+  it is deliberately distinct from the blue-white lightning.
+
 ## [1.1.0] - 2026-10-25
 
 ### Changed
