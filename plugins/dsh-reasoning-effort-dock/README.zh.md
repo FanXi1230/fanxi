@@ -34,6 +34,8 @@ Reasoning Effort Dock 在输入框的模型控件行里加入一条紧凑的滑�
 - 选中的档位通过 DSH 官方 `session.selectModel({ provider, model, reasoningEffort })` 写入当前会话，影响下一条请求真实使用的推理参数，而不是仅做显示。
 - 空白新会话和已有会话都会显示；控件注册在输入框模型行的 `conversation.input.right` 槽位。
 - 只有 `max` 档加入蓝白色闪电流光层；`off` / `low` / `high` 通过填充色渐变和贯穿全档位的虹彩高光保持连续感。
+- 除闪电外，所有动态光效都被裁剪在进度条内；只有闪电允许溢出。
+- `max` 档会周期性出现贯穿整条进度条的短促闪电闪光，快速闪两下后消失，再重复循环。
 - 样式跟随当前 DSH 主题，支持 `prefers-reduced-motion`。
 
 ## 环境要求
@@ -46,13 +48,13 @@ Reasoning Effort Dock 在输入框的模型控件行里加入一条紧凑的滑�
 
 ### 从插件市场安装
 
-收录合并进 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) 后，可在 DSH 插件市场 / Discover 页面一键安装。
+插件已收录在 [awesome-dsh-plugin](https://awesome-dsh-plugin.com/p/FanXi1230/fanxi--plugins-dsh-reasoning-effort-dock/)。可在 DSH 插件市场 / Discover 页面一键安装，或使用下面的 Release 安装命令。
 
 ### 从 GitHub Release 安装
 
 ```sh
 dsh plugin --profile web add \
-  https://github.com/FanXi1230/fanxi/releases/download/dsh-reasoning-effort-dock-v1.0.0/dsh-reasoning-effort-dock-1.0.0.tgz
+  https://github.com/FanXi1230/fanxi/releases/latest/download/dsh-reasoning-effort-dock.tgz
 ```
 
 如果安装后没有立即出现，重启 `dsh web`。
@@ -79,7 +81,7 @@ node scripts/validate.mjs
 
 这是一个标准 DSH bundle：Host 半侧为空；Client 半侧读取 `ctx.modelDirectories.directoryFor(sessionId)` 的会话模型目录，并调用与 DSH 自己的模型菜单相同的 `directory.select(...)`。插件不额外存会话状态、不发起网络请求、不保存凭据。
 
-MAX 闪电层是纯 CSS/SVG，常驻 DOM 并通过透明度交叉淡入淡出；其他档位时暂停动画，所以切换档位不会突然出现或消失。
+MAX 闪电层是纯 CSS/SVG，常驻 DOM 并通过透明度交叉淡入淡出；其他档位时暂停动画，所以切换档位不会突然出现或消失。流光、填充和滑块光晕都被限制在各自的裁剪容器中，只有闪电及其光晕允许溢出进度条。
 
 ## 校验
 

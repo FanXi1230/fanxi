@@ -43,6 +43,10 @@ native reasoning levels as a snap slider rather than a menu:
 - Only `max` adds the white-blue electric layer. `off`, `low`, and `high`
   cross-fade through their own fill colors while a subtle iridescent highlight
   keeps the bar visually continuous.
+- Every non-lightning moving layer is clipped to the track. Only the lightning
+  is allowed to paint outside the bar.
+- On `max`, short full-width lightning flashes cross the track, blink twice,
+  and vanish before repeating.
 - The component follows the active DSH theme tokens and respects
   `prefers-reduced-motion`.
 
@@ -58,15 +62,16 @@ native reasoning levels as a snap slider rather than a menu:
 
 ### From the plugin market
 
-Once the listing is merged into
-[awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin),
-install **Reasoning Effort Dock** from the DSH plugin market / Discover page.
+Reasoning Effort Dock is listed in
+[awesome-dsh-plugin](https://awesome-dsh-plugin.com/p/FanXi1230/fanxi--plugins-dsh-reasoning-effort-dock/).
+Install it from the DSH plugin market / Discover page, or use the release
+command below.
 
 ### From the GitHub release tarball
 
 ```sh
 dsh plugin --profile web add \
-  https://github.com/FanXi1230/fanxi/releases/download/dsh-reasoning-effort-dock-v1.0.0/dsh-reasoning-effort-dock-1.0.0.tgz
+  https://github.com/FanXi1230/fanxi/releases/latest/download/dsh-reasoning-effort-dock.tgz
 ```
 
 Restart `dsh web` if the plugin does not appear immediately.
@@ -102,7 +107,9 @@ session state, does not call the network, and does not store credentials.
 
 The MAX lightning layer is pure CSS/SVG, is always mounted, and cross-fades by
 opacity; its animations are paused while another level is active. That is what
-makes level changes smooth rather than switching a display on and off.
+makes level changes smooth rather than switching a display on and off. The
+moving fill, shimmer, and thumb effects stay inside their clipping containers;
+only the lightning and its glow are allowed to overflow the rail.
 
 ## Validation
 

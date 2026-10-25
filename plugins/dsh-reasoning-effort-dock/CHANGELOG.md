@@ -4,6 +4,21 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [1.1.0] - 2026-10-25
+
+### Changed
+
+- Kept every non-lightning animated layer inside the track: removed the
+  outside-the-rail white sweep, bloom, vertical streaks, spark layer, ambient
+  halo, and thumb pulse ring.
+- Raised the continuous lightning contrast with a dark outline glow and slightly
+  thicker white-blue strokes so it remains legible over the bright MAX fill.
+
+### Added
+
+- Two full-bar lightning flashes per 3.6 s cycle. Each pass draws quickly across
+  the track, blinks twice, and disappears before the next pass.
+
 ## [1.0.0] - 2026-10-24
 
 ### Added

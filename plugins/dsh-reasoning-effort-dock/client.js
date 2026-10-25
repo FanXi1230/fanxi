@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Client half of the reasoning-effort slider.
  *
  * The control lives inside the composer tool row (`conversation.input.right`),
@@ -97,9 +97,6 @@ window.__ModuleLoader__.load({
   --dsh-effort-sheen-opacity: 1;
   --dsh-effort-halo-opacity: 1;
   border-color: color-mix(in srgb, #8ff2ff 30%, var(--dsw-alias-border-l1));
-  box-shadow:
-    0 0 0 1px rgba(108, 229, 255, 0.08),
-    0 0 22px rgba(40, 143, 255, 0.14);
 }
 
 .dsh-effort[data-error="true"] {
@@ -108,22 +105,6 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-busy="true"] .dsh-effort__track {
   cursor: progress;
-}
-
-.dsh-effort__halo {
-  position: absolute;
-  z-index: 0;
-  top: 50%;
-  left: -6px;
-  right: -6px;
-  height: 48px;
-  border-radius: 999px;
-  background: radial-gradient(ellipse at center, var(--dsh-effort-glow), transparent 70%);
-  filter: blur(12px);
-  opacity: var(--dsh-effort-halo-opacity);
-  transform: translateY(-50%);
-  transition: opacity 500ms ease, filter 500ms ease;
-  pointer-events: none;
 }
 
 .dsh-effort__track {
@@ -286,17 +267,6 @@ window.__ModuleLoader__.load({
   box-shadow: 0 0 6px var(--dsh-effort-glow);
 }
 
-.dsh-effort__thumb::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border: 1px solid rgba(171, 244, 255, 0.55);
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 460ms ease;
-  pointer-events: none;
-}
-
 .dsh-effort__track:hover .dsh-effort__thumb {
   transform: translate(-50%, -50%) scale(1.07);
 }
@@ -349,8 +319,10 @@ window.__ModuleLoader__.load({
   opacity: 1;
 }
 
-/* MAX-only electricity. The wrapper is always mounted and cross-fades, so a
-   level change never snaps the lightning layer in or out. */
+/* MAX-only electricity. All non-lightning motion is clipped to the rail and
+   fill; this wrapper is the only intentional overflow layer, so it contains
+   lightning and nothing else. The layer is always mounted and cross-fades, so
+   a level change never snaps the lightning in or out. */
 .dsh-effort__max-fx {
   position: absolute;
   z-index: 4;
@@ -383,53 +355,6 @@ window.__ModuleLoader__.load({
   animation-play-state: running !important;
 }
 
-.dsh-effort__max-bloom {
-  position: absolute;
-  inset: -3px 3%;
-  border-radius: 999px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(161, 248, 255, 0.42),
-    rgba(48, 122, 255, 0.14) 45%,
-    transparent 72%
-  );
-  filter: blur(8px);
-  opacity: 0.86;
-}
-
-.dsh-effort__max-streaks {
-  position: absolute;
-  top: 12px;
-  bottom: 12px;
-  left: 0;
-  right: 0;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 12px,
-    rgba(219, 253, 255, 0.78) 13px,
-    transparent 15px 27px
-  );
-  background-size: 42px 100%;
-  opacity: 0.6;
-  mix-blend-mode: screen;
-  animation: dsh-effort-streaks 0.9s linear infinite;
-}
-
-.dsh-effort__max-sparks {
-  position: absolute;
-  inset: -9px -3px;
-  background-image:
-    radial-gradient(circle at 20% 32%, rgba(255, 255, 255, 0.95) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 74% 68%, rgba(139, 242, 255, 0.9) 0 1.2px, transparent 1.8px),
-    radial-gradient(circle at 48% 20%, rgba(255, 255, 255, 0.75) 0 0.8px, transparent 1.4px);
-  background-repeat: repeat;
-  background-size: 88px 100%, 143px 100%, 197px 100%;
-  background-position: 0 0, 28px 0, 71px 0;
-  mix-blend-mode: screen;
-  opacity: 0.82;
-  animation: dsh-effort-sparks 2.2s linear infinite;
-}
-
 .dsh-effort__max-bolts {
   position: absolute;
   inset: 0;
@@ -437,9 +362,10 @@ window.__ModuleLoader__.load({
   height: 100%;
   overflow: visible;
   filter:
-    drop-shadow(0 0 2px rgba(255, 255, 255, 0.85))
-    drop-shadow(0 0 7px rgba(100, 229, 255, 0.86))
-    drop-shadow(0 0 14px rgba(44, 126, 255, 0.38));
+    drop-shadow(0 1px 1px rgba(0, 8, 20, 0.9))
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 8px rgba(90, 225, 255, 0.9))
+    drop-shadow(0 0 16px rgba(32, 100, 255, 0.5));
 }
 
 .dsh-effort__max-bolts path {
@@ -457,13 +383,14 @@ window.__ModuleLoader__.load({
 
 .dsh-effort__bolt {
   stroke: url(#dsh-effort-bolt-gradient);
-  stroke-width: 1.25;
+  stroke-width: 1.7;
   stroke-dasharray: 22 78;
   animation: dsh-effort-bolt 1.25s linear infinite;
 }
 
 .dsh-effort__bolt--b {
   opacity: 0.8;
+  stroke-width: 1.35;
   stroke-dasharray: 9 91;
   animation-duration: 0.92s;
   animation-delay: -0.32s;
@@ -471,20 +398,28 @@ window.__ModuleLoader__.load({
 
 .dsh-effort__bolt--c {
   opacity: 0.68;
+  stroke-width: 1.2;
   stroke-dasharray: 5 95;
   animation-duration: 0.72s;
   animation-delay: -0.16s;
 }
 
-.dsh-effort__max-sheen {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -36%;
-  width: 34%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.88), transparent);
-  filter: blur(2px);
-  animation: dsh-effort-max-sheen 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+/* Two sharp, full-bar flashes. The stroke is drawn across the whole track in a
+   fraction of the cycle, then disappears again before the next pass. */
+.dsh-effort__bolt--flash {
+  stroke: #f2ffff;
+  stroke-width: 1.85;
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(225, 254, 255, 0.95));
+  animation: dsh-effort-bolt-flash 3.6s linear infinite;
+}
+
+.dsh-effort__bolt--flash-b {
+  stroke-width: 1.35;
+  animation-delay: -1.8s;
+  filter: drop-shadow(0 0 3px rgba(176, 248, 255, 0.8));
 }
 
 .dsh-effort[data-level="max"] .dsh-effort__thumb {
@@ -492,13 +427,7 @@ window.__ModuleLoader__.load({
   background: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 70%, #1a70ff);
   box-shadow:
     0 0 0 3px rgba(134, 240, 255, 0.14),
-    0 0 10px rgba(104, 231, 255, 0.64),
-    0 0 20px rgba(50, 117, 255, 0.38);
-}
-
-.dsh-effort[data-level="max"] .dsh-effort__thumb::after {
-  opacity: 0.92;
-  animation: dsh-effort-thumb-pulse 1.8s ease-out infinite;
+    0 0 8px rgba(104, 231, 255, 0.56);
 }
 
 .dsh-effort[data-level="max"] .dsh-effort__label.is-active {
@@ -520,43 +449,46 @@ window.__ModuleLoader__.load({
   100% { left: 104%; }
 }
 
-@keyframes dsh-effort-streaks {
-  from { background-position: 0 0; }
-  to { background-position: 42px 0; }
-}
-
-@keyframes dsh-effort-sparks {
-  from { background-position: 0 0, 28px 0, 71px 0; }
-  to { background-position: 88px 0, 171px 0, 268px 0; }
-}
-
 @keyframes dsh-effort-bolt {
   to { stroke-dashoffset: -100; }
 }
 
-@keyframes dsh-effort-max-sheen {
-  0% { left: -36%; opacity: 0; }
-  14% { opacity: 0.9; }
-  76% { opacity: 0.72; }
-  100% { left: 104%; opacity: 0; }
-}
-
-@keyframes dsh-effort-thumb-pulse {
-  0% { transform: scale(0.8); opacity: 0.8; }
-  74%, 100% { transform: scale(1.45); opacity: 0; }
+@keyframes dsh-effort-bolt-flash {
+  0%, 55% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  58% {
+    stroke-dashoffset: 100;
+    opacity: 0.92;
+  }
+  63% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+  66.5% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+  70%, 100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dsh-effort__rail::before,
   .dsh-effort__fill::before,
   .dsh-effort__fill::after,
-  .dsh-effort__max-fx *,
-  .dsh-effort[data-level="max"] .dsh-effort__thumb::after {
+  .dsh-effort__max-fx * {
     animation: none !important;
   }
   .dsh-effort__fill,
-  .dsh-effort__thumb,
-  .dsh-effort__halo {
+  .dsh-effort__thumb {
     transition: none;
   }
 }
@@ -816,7 +748,6 @@ window.__ModuleLoader__.load({
             'data-busy': busy ? 'true' : 'false',
             'data-error': failure ? 'true' : 'false',
           },
-          h('span', { className: 'dsh-effort__halo', 'aria-hidden': 'true' }),
           h(
             'div',
             {
@@ -859,9 +790,6 @@ window.__ModuleLoader__.load({
             h(
               'span',
               { className: 'dsh-effort__max-fx', 'aria-hidden': 'true' },
-              h('span', { className: 'dsh-effort__max-bloom' }),
-              h('span', { className: 'dsh-effort__max-streaks' }),
-              h('span', { className: 'dsh-effort__max-sparks' }),
               h(
                 'svg',
                 {
@@ -911,9 +839,18 @@ window.__ModuleLoader__.load({
                   className: 'dsh-effort__bolt dsh-effort__bolt--c',
                   pathLength: 100,
                   d: 'M -10 15 L 24 25 L 52 11 L 81 23 L 109 15 L 137 28 L 166 18 L 194 30 L 222 13 L 250 25 L 279 18 L 308 29 L 337 15 L 365 26 L 393 17 L 420 24',
+                }),
+                h('path', {
+                  className: 'dsh-effort__bolt dsh-effort__bolt--flash',
+                  pathLength: 100,
+                  d: 'M -8 24 L 30 19 L 58 31 L 88 16 L 116 28 L 145 21 L 174 34 L 203 14 L 232 27 L 261 19 L 290 32 L 318 17 L 346 30 L 373 20 L 400 28 L 428 22',
+                }),
+                h('path', {
+                  className: 'dsh-effort__bolt dsh-effort__bolt--flash dsh-effort__bolt--flash-b',
+                  pathLength: 100,
+                  d: 'M -8 34 L 26 27 L 55 38 L 85 23 L 113 35 L 142 26 L 170 40 L 198 24 L 227 34 L 255 26 L 284 37 L 312 22 L 340 34 L 368 25 L 396 36 L 428 30',
                 })
-              ),
-              h('span', { className: 'dsh-effort__max-sheen' })
+              )
             ),
             h('span', {
               className: 'dsh-effort__thumb',
