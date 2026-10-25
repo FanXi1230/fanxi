@@ -1,0 +1,26 @@
+name: Validate Nova
+
+on:
+  push:
+    paths:
+      - "plugins/dsh-nova/**"
+      - ".github/workflows/dsh-nova.yml"
+  pull_request:
+    paths:
+      - "plugins/dsh-nova/**"
+      - ".github/workflows/dsh-nova.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate package
+        run: node plugins/dsh-nova/scripts/validate.mjs

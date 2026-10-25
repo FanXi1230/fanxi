@@ -10,12 +10,12 @@
  * surfaces stay in sync.
  */
 window.__ModuleLoader__.load({
-  id: 'dsh-reasoning-effort-dock',
+  id: 'dsh-nova',
   factory(require) {
     const React = require('react');
     const h = React.createElement;
 
-    const NS = 'dsh-reasoning-effort-dock';
+    const NS = 'dsh-nova';
     const LEVEL_ORDER = ['off', 'low', 'high', 'max'];
     const LEVEL_NAMES = Object.freeze({ off: 'Off', low: 'Low', high: 'High', max: 'Max' });
     const DEFAULT_LABEL = '推理强度';
@@ -24,6 +24,99 @@ window.__ModuleLoader__.load({
       const key = String(value ?? '').toLowerCase();
       if (LEVEL_NAMES[key]) return LEVEL_NAMES[key];
       return key ? key.charAt(0).toUpperCase() + key.slice(1) : 'Off';
+    }
+
+    const STAR_COLORS = [
+      'rgba(238, 252, 255, 0.96)',
+      'rgba(156, 231, 255, 0.92)',
+      'rgba(118, 174, 255, 0.92)',
+      'rgba(168, 143, 255, 0.84)',
+      'rgba(89, 119, 255, 0.8)',
+      'rgba(255, 221, 155, 0.86)',
+    ];
+
+    const STAR_COLORS_HIGH = [
+      'rgba(232, 248, 255, 0.96)',
+      'rgba(146, 208, 255, 0.92)',
+      'rgba(112, 152, 255, 0.9)',
+      'rgba(154, 137, 255, 0.88)',
+      'rgba(198, 142, 255, 0.8)',
+      'rgba(255, 226, 170, 0.82)',
+    ];
+
+    const STAR_COLORS_MAX = [
+      'rgba(238, 252, 255, 0.98)',
+      'rgba(150, 236, 255, 0.94)',
+      'rgba(112, 176, 255, 0.92)',
+      'rgba(176, 143, 255, 0.9)',
+      'rgba(86, 106, 255, 0.86)',
+      'rgba(255, 221, 155, 0.9)',
+    ];
+
+    const STAR_PALETTES = {
+      off: [STAR_COLORS[0], STAR_COLORS[1], STAR_COLORS[4]],
+      low: [STAR_COLORS[0], STAR_COLORS[1], STAR_COLORS[2], STAR_COLORS[4]],
+      high: STAR_COLORS_HIGH,
+      max: STAR_COLORS_MAX,
+    };
+
+    const STAR_LEVELS = ['off', 'low', 'high', 'max'];
+    const STAR_COUNTS = {
+      off: { cosmos: 15, bar: 10 },
+      low: { cosmos: 26, bar: 18 },
+      high: { cosmos: 36, bar: 26 },
+      max: { cosmos: 20, bar: 16 },
+    };
+
+    const MAX_COLOR_PUSH = ['#0047ff', '#00e5ff', '#00ff8a', '#ffb300', '#ff2d92', '#8a4dff'];
+    const MAX_COLOR_GRADIENT =
+      'linear-gradient(90deg, ' +
+      MAX_COLOR_PUSH.concat(MAX_COLOR_PUSH, MAX_COLOR_PUSH[0]).join(', ') +
+      ')';
+
+    function makeStar(area, level, previous) {
+      const bar = area === 'bar';
+      const duration = previous ? previous.duration : 2.2 + Math.random() * 3.9;
+      const delay = previous ? previous.delay : -Math.random() * 6;
+      const palette = STAR_PALETTES[level] || STAR_COLORS;
+      return {
+        x: 4 + Math.random() * 92,
+        y: bar ? 8 + Math.random() * 84 : 6 + Math.random() * 88,
+        size: (bar ? 1.1 : 1.35) + Math.random() * (bar ? 1.5 : 2.0),
+        duration,
+        delay,
+        color: palette[Math.floor(Math.random() * palette.length)],
+      };
+    }
+
+    function EffortStar({ area, level }) {
+      const [star, setStar] = React.useState(() => makeStar(area, level));
+      return h('i', {
+        className: 'dsh-effort__star',
+        'aria-hidden': 'true',
+        style: {
+          left: star.x + '%',
+          top: star.y + '%',
+          width: star.size + 'px',
+          height: star.size + 'px',
+          background: star.color,
+          boxShadow: '0 0 ' + (star.size * 2.5).toFixed(1) + 'px ' + star.color +
+            ', 0 0 ' + (star.size * 5).toFixed(1) + 'px ' + star.color,
+          animationDuration: star.duration + 's',
+          animationDelay: star.delay + 's',
+        },
+        onAnimationIteration: () => setStar((prev) => makeStar(area, level, prev)),
+      });
+    }
+
+    function EffortStarfield({ area, count, level }) {
+      return h(
+        React.Fragment,
+        null,
+        Array.from({ length: count }, (_, index) =>
+          h(EffortStar, { key: index, area, level })
+        )
+      );
     }
 
     const CSS = `
@@ -79,9 +172,9 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-level="low"] {
   --dsh-effort-accent: #99d2ff;
-  --dsh-effort-fill-color: #6db6ff;
-  --dsh-effort-glow: rgba(102, 183, 255, 0.38);
-  --dsh-effort-rail-color: color-mix(in srgb, var(--dsw-alias-label-secondary) 18%, var(--dsw-alias-bg-layer-2));
+  --dsh-effort-fill-color: #74bfff;
+  --dsh-effort-glow: rgba(110, 194, 255, 0.46);
+  --dsh-effort-rail-color: color-mix(in srgb, #5591cc 34%, var(--dsw-alias-bg-layer-2));
   --dsh-effort-flow-opacity: 0.44;
   --dsh-effort-sheen-opacity: 0.58;
   --dsh-effort-halo-opacity: 0.34;
@@ -89,9 +182,9 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-level="high"] {
   --dsh-effort-accent: #7793ff;
-  --dsh-effort-fill-color: #3657f4;
-  --dsh-effort-glow: rgba(66, 107, 255, 0.52);
-  --dsh-effort-rail-color: color-mix(in srgb, var(--dsw-alias-label-secondary) 18%, var(--dsw-alias-bg-layer-2));
+  --dsh-effort-fill-color: #3e63ff;
+  --dsh-effort-glow: rgba(76, 118, 255, 0.6);
+  --dsh-effort-rail-color: color-mix(in srgb, #4657ad 40%, var(--dsw-alias-bg-layer-2));
   --dsh-effort-flow-opacity: 0.66;
   --dsh-effort-sheen-opacity: 0.82;
   --dsh-effort-halo-opacity: 0.52;
@@ -99,11 +192,11 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-level="max"] {
   --dsh-effort-accent: #c5fbff;
-  --dsh-effort-fill-color: #28c2ff;
+  --dsh-effort-fill-color: #06152f;
   --dsh-effort-glow: rgba(94, 229, 255, 0.68);
   --dsh-effort-rail-color: color-mix(in srgb, var(--dsw-alias-label-secondary) 18%, var(--dsw-alias-bg-layer-2));
-  --dsh-effort-flow-opacity: 0.98;
-  --dsh-effort-sheen-opacity: 1;
+  --dsh-effort-flow-opacity: 0.5;
+  --dsh-effort-sheen-opacity: 0.62;
   --dsh-effort-halo-opacity: 1;
   border-color: color-mix(in srgb, #8ff2ff 30%, var(--dsw-alias-border-l1));
 }
@@ -114,6 +207,23 @@ window.__ModuleLoader__.load({
 
 .dsh-effort[data-busy="true"] .dsh-effort__track {
   cursor: progress;
+}
+
+/* Off is the lowest tier: a faint dusting of stars, one slow photon, and a
+   barely-there cool highlight. No sweep, shimmer, or thumb pulse. */
+.dsh-effort[data-level="off"] .dsh-effort__halo {
+  display: none;
+}
+.dsh-effort[data-level="off"] .dsh-effort__fill::after,
+.dsh-effort[data-level="off"] .dsh-effort__thumb::after {
+  display: none;
+}
+.dsh-effort[data-level="off"] .dsh-effort__cosmos {
+  opacity: 0.42;
+}
+.dsh-effort[data-level="off"] .dsh-effort__fill::before {
+  --dsh-effort-flow-opacity: 0.12;
+  animation-duration: 8.4s;
 }
 
 .dsh-effort__halo {
@@ -132,8 +242,8 @@ window.__ModuleLoader__.load({
   pointer-events: none;
 }
 
-/* Quiet starfield around the bar. Root clipping keeps every speck inside the
-   module border, including its rounded corners. */
+/* Nebula wash around the bar. The actual stars are React nodes below, so they
+   can jump to new positions and change colour between twinkle cycles. */
 .dsh-effort__cosmos {
   position: absolute;
   z-index: 0;
@@ -141,19 +251,85 @@ window.__ModuleLoader__.load({
   border-radius: inherit;
   overflow: hidden;
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.9;
+  transition: opacity 520ms ease;
   background:
-    radial-gradient(circle at 8% 22%, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 19% 77%, rgba(128, 231, 255, 0.8) 0 0.9px, transparent 1.5px),
-    radial-gradient(circle at 31% 16%, rgba(255, 255, 255, 0.55) 0 0.8px, transparent 1.3px),
-    radial-gradient(circle at 44% 83%, rgba(255, 228, 160, 0.8) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 57% 27%, rgba(202, 247, 255, 0.7) 0 0.8px, transparent 1.4px),
-    radial-gradient(circle at 68% 72%, rgba(255, 255, 255, 0.65) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 81% 18%, rgba(255, 228, 160, 0.6) 0 0.8px, transparent 1.4px),
-    radial-gradient(circle at 92% 64%, rgba(173, 235, 255, 0.75) 0 1.1px, transparent 1.8px),
-    radial-gradient(ellipse at 50% 55%, rgba(27, 74, 175, 0.28), transparent 65%);
-  background-repeat: no-repeat;
-  animation: dsh-effort-cosmos 6.5s ease-in-out infinite;
+    radial-gradient(ellipse at 72% 30%, rgba(75, 62, 170, 0.16), transparent 58%),
+    radial-gradient(ellipse at 24% 76%, rgba(30, 96, 200, 0.2), transparent 62%),
+    radial-gradient(ellipse at 50% 50%, rgba(12, 45, 120, 0.2), transparent 75%);
+}
+
+.dsh-effort__star-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 520ms ease;
+  pointer-events: none;
+}
+
+.dsh-effort[data-level="off"] .dsh-effort__star-layer[data-star-level="off"],
+.dsh-effort[data-level="low"] .dsh-effort__star-layer[data-star-level="low"],
+.dsh-effort[data-level="high"] .dsh-effort__star-layer[data-star-level="high"],
+.dsh-effort[data-level="max"] .dsh-effort__star-layer[data-star-level="max"] {
+  opacity: 1;
+}
+
+.dsh-effort__star {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  animation-name: dsh-effort-star-life;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* A soft moving aurora veil behind the bar. It is wider than the 10px rail
+   but still clipped by the module root. */
+.dsh-effort__aura {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 30px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateY(-50%);
+  filter: blur(9px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  display: block;
+  transition: opacity 520ms ease;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__aura {
+  opacity: 0.5;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(77, 176, 255, 0.3) 28%,
+    rgba(95, 116, 255, 0.32) 55%,
+    transparent 90%
+  );
+  animation: dsh-effort-aura-wave 8.4s ease-in-out infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__aura {
+  opacity: 0.82;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(85, 208, 255, 0.38) 22%,
+    rgba(115, 137, 255, 0.42) 48%,
+    rgba(147, 91, 232, 0.3) 72%,
+    transparent 95%
+  );
+  animation: dsh-effort-aura-wave 5.1s ease-in-out infinite;
 }
 
 .dsh-effort__track {
@@ -196,24 +372,286 @@ window.__ModuleLoader__.load({
   background-size: 220% 100%;
   opacity: 0.56;
   animation: dsh-effort-rail-drift 6.2s linear infinite;
+  transition: opacity 520ms ease;
   pointer-events: none;
 }
 
-/* A few star specks inside the bar itself, kept below the ticks and thumb. */
+.dsh-effort[data-level="off"] .dsh-effort__rail::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(170, 205, 240, 0.18) 42%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  opacity: 0.42;
+  animation-duration: 9.4s;
+}
+
+.dsh-effort[data-level="off"] .dsh-effort__rail::after {
+  opacity: 0.14;
+  animation: dsh-effort-level-wave 7.6s linear infinite;
+}
+
+.dsh-effort[data-level="off"] .dsh-effort__fill {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 6px rgba(168, 205, 240, 0.16);
+}
+
+.dsh-effort[data-level="off"] .dsh-effort__comet--a {
+  width: 20px;
+  height: 2px;
+  opacity: 0.42;
+  animation: dsh-effort-comet 9.4s linear infinite 1.8s;
+}
+
+/* Off and Low share one aurora family: Off is the same veil seen faintly. */
+.dsh-effort[data-level="off"] .dsh-effort__aura {
+  opacity: 0.26;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(88, 168, 246, 0.26) 30%,
+    rgba(103, 132, 255, 0.26) 56%,
+    transparent 92%
+  );
+  animation: dsh-effort-aura-wave 9.6s ease-in-out infinite;
+}
+
+.dsh-effort[data-level="off"] .dsh-effort__fill::before {
+  filter: saturate(0.82);
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__rail::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(87, 196, 255, 0.32) 28%,
+    rgba(112, 142, 255, 0.24) 56%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  opacity: 0.9;
+  animation-duration: 7.4s;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__rail::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(104, 220, 255, 0.4) 22%,
+    rgba(112, 130, 255, 0.38) 50%,
+    rgba(150, 95, 235, 0.26) 74%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  opacity: 1;
+  animation-duration: 4.8s;
+}
+
 .dsh-effort__rail::after {
   content: "";
   position: absolute;
   z-index: 2;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 12% 45%, rgba(255, 255, 255, 0.95) 0 0.7px, transparent 1.4px),
-    radial-gradient(circle at 37% 30%, rgba(190, 250, 255, 0.85) 0 0.6px, transparent 1.3px),
-    radial-gradient(circle at 64% 70%, rgba(255, 255, 255, 0.75) 0 0.8px, transparent 1.5px),
-    radial-gradient(circle at 86% 38%, rgba(255, 232, 170, 0.85) 0 0.7px, transparent 1.4px);
-  background-repeat: no-repeat;
-  opacity: 0.8;
-  animation: dsh-effort-star-twinkle 4.8s ease-in-out infinite;
+  background: repeating-linear-gradient(
+    112deg,
+    transparent 0 18px,
+    rgba(205, 245, 255, 0.18) 22px,
+    transparent 30px 46px
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 520ms ease;
   pointer-events: none;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__rail::after {
+  opacity: 0.3;
+  animation: dsh-effort-level-wave 5.2s linear infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__rail::after {
+  opacity: 0.52;
+  animation: dsh-effort-level-wave 3.1s linear infinite;
+}
+
+/* Twinkling stars are real DOM nodes inside this clipped layer. */
+.dsh-effort__bar-stars {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Low and High get progressively richer bar animation. Both layers are
+   clipped by the rail; Off and Max leave them hidden. */
+.dsh-effort__aurora,
+.dsh-effort__comet,
+.dsh-effort__energy {
+  display: block;
+  opacity: 0;
+  transition: opacity 520ms ease;
+  pointer-events: none;
+}
+
+.dsh-effort__aurora {
+  position: absolute;
+  z-index: 1;
+  top: -80%;
+  bottom: -80%;
+  left: -35%;
+  right: -35%;
+  background:
+    linear-gradient(
+      100deg,
+      transparent 6%,
+      rgba(170, 242, 255, 0.42) 30%,
+      rgba(80, 118, 255, 0.48) 50%,
+      rgba(165, 112, 255, 0.3) 68%,
+      transparent 90%
+    ),
+    repeating-linear-gradient(
+      115deg,
+      transparent 0 24px,
+      rgba(205, 249, 255, 0.24) 27px,
+      transparent 34px 52px
+    );
+  background-size: 240% 100%, 200% 100%;
+  mix-blend-mode: screen;
+  filter: blur(3px);
+  opacity: 0;
+}
+
+.dsh-effort__aurora::before,
+.dsh-effort__aurora::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.dsh-effort__aurora::before {
+  top: -35%;
+  bottom: -35%;
+  left: -42%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(210, 250, 255, 0.7), transparent);
+  filter: blur(2px);
+  opacity: 0.55;
+  animation: dsh-effort-level-sheen 6.2s linear infinite;
+}
+
+.dsh-effort__aurora::after {
+  inset: -20% -25%;
+  background: repeating-linear-gradient(
+    105deg,
+    transparent 0 20px,
+    rgba(194, 242, 255, 0.2) 24px,
+    transparent 32px 58px
+  );
+  opacity: 0.4;
+  animation: dsh-effort-level-wave 4.8s linear infinite;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__aurora {
+  opacity: 0.76;
+  animation: dsh-effort-aurora 8s linear infinite;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__aurora::before {
+  opacity: 0.42;
+  animation-duration: 7.5s;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__aurora::after {
+  opacity: 0.26;
+  animation-duration: 6s;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__aurora {
+  opacity: 0.96;
+  animation: dsh-effort-aurora 5.2s linear infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__aurora::before {
+  opacity: 0.78;
+  animation-duration: 4.2s;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__aurora::after {
+  opacity: 0.58;
+  animation-duration: 3.2s;
+}
+
+.dsh-effort__comet {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: -34%;
+  width: 28px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(218, 252, 255, 0.92));
+  filter: blur(0.35px);
+  box-shadow: 0 0 8px rgba(150, 236, 255, 0.6);
+  opacity: 0;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__comet--a {
+  opacity: 0.75;
+  animation: dsh-effort-comet 7.2s linear infinite 0.6s;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__comet--a {
+  opacity: 0.92;
+  animation: dsh-effort-comet 4.2s linear infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__comet--b {
+  top: 27%;
+  width: 17px;
+  opacity: 0.58;
+  animation: dsh-effort-comet 5.4s linear infinite -2.2s;
+}
+
+.dsh-effort__energy {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: -38%;
+  width: 24%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(210, 251, 255, 0.9), transparent);
+  filter: blur(1px);
+  opacity: 0;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__energy {
+  opacity: 0.8;
+  animation: dsh-effort-energy 3.4s linear infinite;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__halo {
+  animation: dsh-effort-halo-breathe 6.8s ease-in-out infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__halo {
+  animation: dsh-effort-halo-breathe 4.6s ease-in-out infinite;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__thumb::after {
+  opacity: 0.3;
+  animation: dsh-effort-thumb-pulse 3.4s ease-out infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__thumb::after {
+  opacity: 0.5;
+  animation: dsh-effort-thumb-pulse 2.4s ease-out infinite;
 }
 
 .dsh-effort__fill {
@@ -240,6 +678,47 @@ window.__ModuleLoader__.load({
     width 460ms var(--dsh-effort-ease),
     background-color 520ms var(--dsh-effort-ease),
     box-shadow 480ms ease;
+}
+
+.dsh-effort[data-level="low"] .dsh-effort__fill {
+  background-color: #1d558c;
+  background-image:
+    radial-gradient(ellipse at 30% 30%, rgba(110, 218, 255, 0.74), transparent 60%),
+    radial-gradient(ellipse at 78% 70%, rgba(98, 132, 255, 0.46), transparent 60%),
+    linear-gradient(180deg, #3a80c4 0%, #14365e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(208, 248, 255, 0.3),
+    0 0 10px rgba(83, 183, 255, 0.36),
+    0 0 22px rgba(45, 120, 255, 0.18);
+  animation: dsh-effort-fill-breathe 5.8s ease-in-out infinite;
+}
+
+.dsh-effort[data-level="high"] .dsh-effort__fill {
+  background-color: #182768;
+  background-image:
+    radial-gradient(ellipse at 24% 25%, rgba(117, 143, 255, 0.76), transparent 60%),
+    radial-gradient(ellipse at 76% 75%, rgba(146, 102, 240, 0.5), transparent 62%),
+    linear-gradient(180deg, #2647a8 0%, #0b1836 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(220, 251, 255, 0.34),
+    0 0 12px rgba(92, 150, 255, 0.44),
+    0 0 26px rgba(58, 94, 255, 0.22);
+  animation: dsh-effort-fill-breathe 3.9s ease-in-out infinite;
+}
+
+/* Max is a deep-space bar: navy/indigo nebula plus cyan and violet accents.
+   The gold flashes stay a separate accent, so this does not become a rainbow. */
+.dsh-effort[data-level="max"] .dsh-effort__fill {
+  background-color: #06152f;
+  background-image:
+    radial-gradient(ellipse at 18% 30%, rgba(53, 101, 255, 0.62), transparent 56%),
+    radial-gradient(ellipse at 82% 72%, rgba(99, 63, 186, 0.44), transparent 60%),
+    radial-gradient(ellipse at 52% 0%, rgba(100, 225, 255, 0.24), transparent 62%),
+    linear-gradient(180deg, #0c2b5e 0%, #040e24 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(196, 249, 255, 0.34),
+    0 0 10px rgba(94, 229, 255, 0.38),
+    0 0 22px rgba(42, 103, 255, 0.22);
 }
 
 .dsh-effort__fill::before {
@@ -279,6 +758,36 @@ window.__ModuleLoader__.load({
   animation: dsh-effort-sheen 3.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   transition: opacity 480ms ease;
   pointer-events: none;
+}
+
+/* Slow deep-space colour drift inside the Max fill: blue, cyan, violet and a
+   restrained magenta, all kept inside the track. */
+.dsh-effort__max-color {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 520ms ease;
+  mix-blend-mode: screen;
+}
+
+.dsh-effort__max-color-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  width: 200%;
+  filter: blur(1.2px);
+  animation: dsh-effort-max-color-push 12s linear infinite;
+  will-change: transform;
+}
+
+.dsh-effort[data-level="max"] .dsh-effort__max-color {
+  opacity: 0.78;
 }
 
 .dsh-effort__tick {
@@ -446,22 +955,34 @@ window.__ModuleLoader__.load({
   opacity: 0.86;
 }
 
-.dsh-effort__max-streaks {
+/* A horizontal nebula ribbon replaces the old vertical streak field. It is
+   built from layered gradients so it reads as flowing gas, not striped bars. */
+.dsh-effort__max-aurora {
   position: absolute;
-  top: 14px;
-  bottom: 14px;
+  top: 12px;
+  bottom: 12px;
   left: 16px;
   right: 16px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 12px,
-    rgba(219, 253, 255, 0.78) 13px,
-    transparent 15px 27px
-  );
-  background-size: 42px 100%;
-  opacity: 0.6;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      100deg,
+      transparent 4%,
+      rgba(103, 236, 255, 0.3) 28%,
+      rgba(101, 119, 255, 0.42) 50%,
+      rgba(181, 95, 255, 0.28) 72%,
+      transparent 96%
+    ),
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(164, 233, 255, 0.24),
+      transparent 68%
+    );
+  background-size: 220% 100%, 160% 100%;
   mix-blend-mode: screen;
-  animation: dsh-effort-streaks 0.9s linear infinite;
+  filter: blur(1.6px);
+  opacity: 0.72;
+  animation: dsh-effort-max-aurora 5.4s ease-in-out infinite alternate;
 }
 
 .dsh-effort__max-sparks {
@@ -528,8 +1049,8 @@ window.__ModuleLoader__.load({
   animation-delay: -0.16s;
 }
 
-/* Warm starlight flashes, deliberately separate from the blue-white lightning
-   so the two rhythms never read as one colour. */
+/* Deep-space violet flashes, deliberately separate from the blue-white
+   lightning so the two rhythms never read as one colour. */
 .dsh-effort__max-flash {
   position: absolute;
   inset: 0;
@@ -537,9 +1058,9 @@ window.__ModuleLoader__.load({
   height: 100%;
   overflow: visible;
   filter:
-    drop-shadow(0 0 2px rgba(255, 248, 225, 0.96))
-    drop-shadow(0 0 8px rgba(255, 207, 120, 0.86))
-    drop-shadow(0 0 16px rgba(255, 166, 64, 0.38));
+    drop-shadow(0 0 2px rgba(239, 225, 255, 0.96))
+    drop-shadow(0 0 8px rgba(166, 98, 255, 0.9))
+    drop-shadow(0 0 18px rgba(75, 35, 170, 0.55));
 }
 
 .dsh-effort__max-flash path {
@@ -550,7 +1071,7 @@ window.__ModuleLoader__.load({
 }
 
 .dsh-effort__flash {
-  stroke: #ffe1a3;
+  stroke: #dec4ff;
   stroke-width: 1.85;
   stroke-dasharray: 100 100;
   stroke-dashoffset: 100;
@@ -559,7 +1080,7 @@ window.__ModuleLoader__.load({
 }
 
 .dsh-effort__flash--b {
-  stroke: #fff0c7;
+  stroke: #b98fff;
   stroke-width: 1.35;
   animation-delay: -1.8s;
 }
@@ -572,7 +1093,7 @@ window.__ModuleLoader__.load({
   width: 34%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.88), transparent);
   filter: blur(2px);
-  animation: dsh-effort-max-sheen 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: dsh-effort-max-sheen 3.15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .dsh-effort[data-level="max"] .dsh-effort__thumb {
@@ -598,16 +1119,74 @@ window.__ModuleLoader__.load({
   to { background-position: 220% 0; }
 }
 
-@keyframes dsh-effort-cosmos {
-  0%, 100% { opacity: 0.5; filter: brightness(0.96); }
-  42% { opacity: 0.78; filter: brightness(1.14); }
-  58% { opacity: 0.66; filter: brightness(1.04); }
+@keyframes dsh-effort-star-life {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+  }
+  7% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  14% {
+    opacity: 0.16;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  29% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  44% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
 }
 
-@keyframes dsh-effort-star-twinkle {
-  0%, 100% { opacity: 0.55; }
-  44% { opacity: 0.95; }
-  62% { opacity: 0.7; }
+@keyframes dsh-effort-aurora {
+  from { background-position: -140% 0, -100% 0; }
+  to { background-position: 140% 0, 120% 0; }
+}
+
+@keyframes dsh-effort-aura-wave {
+  0%, 100% { transform: translate(-5%, -50%) scaleX(0.94); }
+  50% { transform: translate(5%, -50%) scaleX(1.08); }
+}
+
+@keyframes dsh-effort-level-sheen {
+  0% { left: -42%; opacity: 0; }
+  10% { opacity: 0.9; }
+  76% { opacity: 0.72; }
+  100% { left: 126%; opacity: 0; }
+}
+
+@keyframes dsh-effort-level-wave {
+  from { background-position: 0 0; }
+  to { background-position: 180px 0; }
+}
+
+@keyframes dsh-effort-fill-breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.14); }
+}
+
+@keyframes dsh-effort-comet {
+  0% { left: -34%; opacity: 0; }
+  8% { opacity: 0.92; }
+  55% { opacity: 0.7; }
+  88% { opacity: 0; }
+  100% { left: 110%; opacity: 0; }
+}
+
+@keyframes dsh-effort-energy {
+  0% { left: -38%; opacity: 0; }
+  12% { opacity: 0.9; }
+  82% { opacity: 0.65; }
+  100% { left: 116%; opacity: 0; }
+}
+
+@keyframes dsh-effort-halo-breathe {
+  0%, 100% { transform: translateY(-50%) scaleX(0.96); filter: blur(12px); }
+  50% { transform: translateY(-50%) scaleX(1.04); filter: blur(14px); }
 }
 
 @keyframes dsh-effort-iridescence {
@@ -618,11 +1197,6 @@ window.__ModuleLoader__.load({
 @keyframes dsh-effort-sheen {
   0% { left: -36%; }
   100% { left: 104%; }
-}
-
-@keyframes dsh-effort-streaks {
-  from { background-position: 0 0; }
-  to { background-position: 42px 0; }
 }
 
 @keyframes dsh-effort-sparks {
@@ -661,10 +1235,32 @@ window.__ModuleLoader__.load({
   }
 }
 
+@keyframes dsh-effort-max-color-push {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes dsh-effort-max-aurora {
+  0% {
+    background-position: -120% 0, -80% 0;
+    opacity: 0.52;
+    transform: scaleX(0.98);
+  }
+  50% {
+    opacity: 0.86;
+  }
+  100% {
+    background-position: 120% 0, 90% 0;
+    opacity: 0.68;
+    transform: scaleX(1.02);
+  }
+}
+
 @keyframes dsh-effort-max-sheen {
   0% { left: -36%; opacity: 0; }
-  14% { opacity: 0.9; }
-  76% { opacity: 0.72; }
+  8% { opacity: 0.9; }
+  60% { opacity: 0.72; }
+  76% { left: 104%; opacity: 0; }
   100% { left: 104%; opacity: 0; }
 }
 
@@ -676,10 +1272,21 @@ window.__ModuleLoader__.load({
 @media (prefers-reduced-motion: reduce) {
   .dsh-effort__rail::before,
   .dsh-effort__rail::after,
-  .dsh-effort__cosmos,
+  .dsh-effort__fill,
   .dsh-effort__fill::before,
   .dsh-effort__fill::after,
+  .dsh-effort__aurora,
+  .dsh-effort__aurora::before,
+  .dsh-effort__aurora::after,
+  .dsh-effort__aura,
+  .dsh-effort__comet,
+  .dsh-effort__energy,
+  .dsh-effort__halo,
   .dsh-effort__max-fx *,
+  .dsh-effort__max-color-track,
+  .dsh-effort__star,
+  .dsh-effort[data-level="low"] .dsh-effort__thumb::after,
+  .dsh-effort[data-level="high"] .dsh-effort__thumb::after,
   .dsh-effort[data-level="max"] .dsh-effort__thumb::after {
     animation: none !important;
   }
@@ -738,6 +1345,16 @@ window.__ModuleLoader__.load({
       return Math.max(0, Math.min(count - 1, Math.round(ratio * (count - 1))));
     }
 
+    function crossedLevelIndex(ratio, count) {
+      if (count <= 1) return 0;
+      let index = 0;
+      for (let candidate = 1; candidate < count; candidate += 1) {
+        if (ratio >= indexRatio(candidate, count) - 1e-6) index = candidate;
+        else break;
+      }
+      return index;
+    }
+
     function SliderEntry(props) {
       if (!props.available || !props.directory) return null;
       return h(Slider, props);
@@ -768,7 +1385,7 @@ window.__ModuleLoader__.load({
         try {
           load();
         } catch (error) {
-          console.warn('[dsh-reasoning-effort-dock] could not load the model directory:', error);
+          console.warn('[dsh-nova] could not load the model directory:', error);
         }
       }, [snapshot.status, load]);
 
@@ -807,9 +1424,13 @@ window.__ModuleLoader__.load({
           : 0;
       const displayLevel = displayIndex >= 0 ? levels[displayIndex] : 'off';
       const displayText = levelDisplayName(displayLevel);
+      // While dragging, effects switch when the thumb crosses a stop, not when
+      // it merely comes nearest to one and not only after release.
+      const dragEffectIndex = drag ? crossedLevelIndex(drag.ratio, levels.length) : -1;
+      const effectLevel = drag ? levels[dragEffectIndex] : displayLevel;
       const fillPercent = (displayRatio * 100).toFixed(4) + '%';
       const thumbPercent = (displayRatio * 100).toFixed(4) + '%';
-      const activeLabelIndex = drag ? drag.index : hasActive ? activeIndex : -1;
+      const activeLabelIndex = drag ? dragEffectIndex : hasActive ? activeIndex : -1;
 
       function beginDrag(event) {
         if (busy) return;
@@ -881,7 +1502,7 @@ window.__ModuleLoader__.load({
           });
         } catch (error) {
           setFailure(true);
-          console.warn('[dsh-reasoning-effort-dock] selection failed:', error);
+          console.warn('[dsh-nova] selection failed:', error);
           return;
         }
 
@@ -889,12 +1510,12 @@ window.__ModuleLoader__.load({
           .then((response) => {
             if (!response || response.ok !== true) {
               setFailure(true);
-              console.warn('[dsh-reasoning-effort-dock] selection was rejected:', response);
+              console.warn('[dsh-nova] selection was rejected:', response);
             }
           })
           .catch((error) => {
             setFailure(true);
-            console.warn('[dsh-reasoning-effort-dock] selection failed:', error);
+            console.warn('[dsh-nova] selection failed:', error);
           });
       }
 
@@ -942,12 +1563,32 @@ window.__ModuleLoader__.load({
           {
             key: 'slider',
             className: 'dsh-effort',
-            'data-level': displayLevel,
+            'data-level': effectLevel,
             'data-busy': busy ? 'true' : 'false',
             'data-error': failure ? 'true' : 'false',
           },
           h('span', { className: 'dsh-effort__halo', 'aria-hidden': 'true' }),
-          h('span', { className: 'dsh-effort__cosmos', 'aria-hidden': 'true' }),
+          h(
+            'span',
+            { className: 'dsh-effort__cosmos', 'aria-hidden': 'true' },
+            STAR_LEVELS.map((level) =>
+              h(
+                'span',
+                {
+                  key: level,
+                  className: 'dsh-effort__star-layer',
+                  'data-star-level': level,
+                  'aria-hidden': 'true',
+                },
+                h(EffortStarfield, {
+                  area: 'cosmos',
+                  level,
+                  count: STAR_COUNTS[level].cosmos,
+                })
+              )
+            )
+          ),
+          h('span', { className: 'dsh-effort__aura', 'aria-hidden': 'true' }),
           h(
             'div',
             {
@@ -978,6 +1619,17 @@ window.__ModuleLoader__.load({
                 className: 'dsh-effort__fill',
                 style: { width: fillPercent },
               }),
+              h(
+                'span',
+                { className: 'dsh-effort__max-color', 'aria-hidden': 'true' },
+                h('span', {
+                  className: 'dsh-effort__max-color-track',
+                  'aria-hidden': 'true',
+                  style: {
+                    background: MAX_COLOR_GRADIENT,
+                  },
+                })
+              ),
               levels.map((level, index) =>
                 h('span', {
                   key: 'tick:' + level,
@@ -985,13 +1637,37 @@ window.__ModuleLoader__.load({
                   'data-active': index === activeLabelIndex ? 'true' : 'false',
                   style: { left: (indexRatio(index, levels.length) * 100).toFixed(4) + '%' },
                 })
-              )
+              ),
+              h(
+                'span',
+                { className: 'dsh-effort__bar-stars', 'aria-hidden': 'true' },
+                STAR_LEVELS.map((level) =>
+                  h(
+                    'span',
+                    {
+                      key: level,
+                      className: 'dsh-effort__star-layer',
+                      'data-star-level': level,
+                      'aria-hidden': 'true',
+                    },
+                    h(EffortStarfield, {
+                      area: 'bar',
+                      level,
+                      count: STAR_COUNTS[level].bar,
+                    })
+                  )
+                )
+              ),
+              h('span', { className: 'dsh-effort__aurora', 'aria-hidden': 'true' }),
+              h('span', { className: 'dsh-effort__comet dsh-effort__comet--a', 'aria-hidden': 'true' }),
+              h('span', { className: 'dsh-effort__comet dsh-effort__comet--b', 'aria-hidden': 'true' }),
+              h('span', { className: 'dsh-effort__energy', 'aria-hidden': 'true' })
             ),
             h(
               'span',
               { className: 'dsh-effort__max-fx', 'aria-hidden': 'true' },
               h('span', { className: 'dsh-effort__max-bloom' }),
-              h('span', { className: 'dsh-effort__max-streaks' }),
+              h('span', { className: 'dsh-effort__max-aurora' }),
               h('span', { className: 'dsh-effort__max-sparks' }),
               h(
                 'svg',
@@ -1101,16 +1777,16 @@ window.__ModuleLoader__.load({
     const en = { label: 'Reasoning effort' };
 
     return {
-      name: 'dsh-reasoning-effort-dock',
+      name: 'dsh-nova',
       inject: ['slots', 'sessions', 'remote', 'remote.session', 'modelDirectories', 'locale'],
       apply(ctx) {
         ctx.effect(
           () => ctx.locale.register(NS, 'zh', zh),
-          'dsh-reasoning-effort-dock: zh dictionary'
+          'dsh-nova: zh dictionary'
         );
         ctx.effect(
           () => ctx.locale.register(NS, 'en', en),
-          'dsh-reasoning-effort-dock: en dictionary'
+          'dsh-nova: en dictionary'
         );
 
         let label = DEFAULT_LABEL;
@@ -1128,7 +1804,7 @@ window.__ModuleLoader__.load({
           ctx.slots.register(
             {
               name: 'conversation.input.right',
-              id: 'dsh-reasoning-effort-dock',
+              id: 'dsh-nova',
               order: 0,
               inject: (sessionId) => {
                 if (sessionId === undefined) return { available: false };
@@ -1141,16 +1817,16 @@ window.__ModuleLoader__.load({
                     load: () => {
                       try {
                         directory.load().catch((error) => {
-                          console.warn('[dsh-reasoning-effort-dock] directory load failed:', error);
+                          console.warn('[dsh-nova] directory load failed:', error);
                         });
                       } catch (error) {
-                        console.warn('[dsh-reasoning-effort-dock] directory load failed:', error);
+                        console.warn('[dsh-nova] directory load failed:', error);
                       }
                     },
                     select: (selection) => directory.select(selection),
                   };
                 } catch (error) {
-                  console.warn('[dsh-reasoning-effort-dock] session directory unavailable:', error);
+                  console.warn('[dsh-nova] session directory unavailable:', error);
                   return { available: false };
                 }
               },

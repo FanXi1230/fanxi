@@ -4,6 +4,22 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 semantic versioning.
 
+## [1.3.0] - 2026-10-25
+
+### Changed
+
+- Rebranded from Reasoning Effort Dock to **Nova** (`dsh-nova`) with a
+  cosmos-themed identity and bilingual introduction.
+- Replaced the Max vertical streak field with a drifting nebula/aurora ribbon.
+- Slowed the Max white sweep and added a short rest between passes.
+- Max now has a slower, looping six-colour nebula push and violet horizontal
+  flashes instead of the old gold flashes.
+- Off gained a subdued star dust layer and a faint aurora; Low and High gained
+  denser starfields and stronger tiered effects.
+- Level changes now cross-fade star layers, aurora, glow, comets, and energy
+  effects instead of switching abruptly.
+- Effects follow the stop the thumb actually crosses while dragging.
+
 ## [1.2.1] - 2026-10-25
 
 ### Changed

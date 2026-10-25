@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Reasoning Effort Dock",
-    "description": "Adds a draggable Off / Low / High / Max reasoning-effort slider to the composer model row and syncs it with the current session's model selection."
-  }
-}

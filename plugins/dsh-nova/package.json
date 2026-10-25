@@ -1,7 +1,7 @@
 {
-  "name": "dsh-reasoning-effort-dock",
-  "version": "1.2.1",
-  "description": "A draggable Off / Low / High / Max reasoning-effort slider in the DeepSeek Harness composer model row, bound to the real per-session model selection.",
+  "name": "dsh-nova",
+  "version": "1.3.0",
+  "description": "Nova is a cosmic Off / Low / High / Max reasoning-effort slider for the DeepSeek Harness composer, with a starfield and aurora scene at every level.",
   "type": "module",
   "main": "./index.js",
   "exports": {
@@ -32,6 +32,10 @@
     "reasoning",
     "composer",
     "slider",
+    "cosmos",
+    "stars",
+    "aurora",
+    "nebula",
     "ui"
   ],
   "author": "FanXi1230",
@@ -39,9 +43,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FanXi1230/fanxi.git",
-    "directory": "plugins/dsh-reasoning-effort-dock"
+    "directory": "plugins/dsh-nova"
   },
-  "homepage": "https://github.com/FanXi1230/fanxi/tree/main/plugins/dsh-reasoning-effort-dock#readme",
+  "homepage": "https://github.com/FanXi1230/fanxi/tree/main/plugins/dsh-nova#readme",
   "bugs": {
     "url": "https://github.com/FanXi1230/fanxi/issues"
   },

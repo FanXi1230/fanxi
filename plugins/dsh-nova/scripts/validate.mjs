@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dependency-free release check for the Reasoning Effort Dock package.
+ * Dependency-free release check for the Nova package.
  * Run from the package directory: node scripts/validate.mjs
  */
 import { readFileSync, existsSync } from 'node:fs';
@@ -37,7 +37,7 @@ function readJson(relativePath) {
 
 const pkg = readJson('package.json');
 if (pkg) {
-  if (pkg.name !== 'dsh-reasoning-effort-dock') fail('package name must be dsh-reasoning-effort-dock');
+  if (pkg.name !== 'dsh-nova') fail('package name must be dsh-nova');
   if (!/^\d+\.\d+\.\d+$/.test(pkg.version ?? '')) fail('package version must be semver');
   if (pkg.license !== 'MIT') fail('package license must be MIT');
   if (pkg.dsh?.bundle?.patch !== './cordis.patch.yml') fail('dsh.bundle.patch is missing or incorrect');
@@ -50,8 +50,8 @@ if (pkg) {
 
 const patch = read('cordis.patch.yml');
 if (patch !== null) {
-  if (!patch.includes('id: dsh-reasoning-effort-dock')) fail('cordis.patch.yml must insert dsh-reasoning-effort-dock');
-  if (!patch.includes('name: dsh-reasoning-effort-dock')) fail('cordis.patch.yml must name dsh-reasoning-effort-dock');
+  if (!patch.includes('id: dsh-nova')) fail('cordis.patch.yml must insert dsh-nova');
+  if (!patch.includes('name: dsh-nova')) fail('cordis.patch.yml must name dsh-nova');
 }
 
 const client = read('client.js');
@@ -61,8 +61,8 @@ if (client !== null) {
   } catch (error) {
     fail(`client.js does not parse: ${error.message}`);
   }
-  if (!client.includes("id: 'dsh-reasoning-effort-dock'")) fail('client loader id does not match the package');
-  if (!client.includes("name: 'dsh-reasoning-effort-dock'")) fail('client plugin name does not match the package');
+  if (!client.includes("id: 'dsh-nova'")) fail('client loader id does not match the package');
+  if (!client.includes("name: 'dsh-nova'")) fail('client plugin name does not match the package');
   if (!client.includes("'conversation.input.right'")) fail('client does not register in conversation.input.right');
   if (!client.includes("'remote.session'")) fail('client inject list does not include remote.session');
 }
@@ -96,9 +96,9 @@ for (const file of ['assets/icon-180.png']) {
 }
 
 if (failures.length > 0) {
-  console.error('Reasoning Effort Dock validation failed:');
+  console.error('Nova validation failed:');
   for (const message of failures) console.error(`  - ${message}`);
   process.exit(1);
 }
 
-console.log('Reasoning Effort Dock validation passed.');
+console.log('Nova validation passed.');
